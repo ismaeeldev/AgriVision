@@ -126,4 +126,23 @@
   html {
     @apply font-sans;
   }
+  button, [role="button"] {
+    cursor: pointer;
+  }
+}
+
+.section-padding {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+.bg-agriculture-pattern {
+  background-image: radial-gradient(#1B5E20 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.05;
+}
+
+@keyframes shine {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
 }

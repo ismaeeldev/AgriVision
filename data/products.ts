@@ -4,7 +4,7 @@ export const PRODUCTS = [
     name: "AgriShield Pro",
     price: 29.99,
     rating: 5,
-    image: "/images/products/agrishield.jpg",
+    image: "/images/products/agrishield.png",
     category: "Insecticides",
     description: "Premium broad-spectrum insecticide for complete pest control."
   },
@@ -13,16 +13,16 @@ export const PRODUCTS = [
     name: "CropGuard Max",
     price: 45.50,
     rating: 4.8,
-    image: "/images/products/cropguard.jpg",
+    image: "/images/products/cropGuard.png",
     category: "Fungicides",
     description: "Advanced fungal protection ensuring healthier leaf canopy."
   },
   {
     id: "prod-3",
-    name: "BioGrow Organic Spray",
+    name: "BioGrow Spray",
     price: 34.00,
     rating: 4.9,
-    image: "/images/products/biogrow.jpg",
+    image: "/images/products/bioGrow.png",
     category: "Organic Crop Care",
     description: "Eco-friendly nutrient spray for organic farming enthusiast."
   },
@@ -31,7 +31,7 @@ export const PRODUCTS = [
     name: "PestKill Ultra",
     price: 19.99,
     rating: 4.7,
-    image: "/images/products/pestkill.jpg",
+    image: "/images/products/pestKill.png",
     category: "Insecticides",
     description: "Fast-acting pest elimination solution."
   }

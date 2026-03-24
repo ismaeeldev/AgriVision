@@ -1,6 +1,6 @@
 "use client";
 
-import { useAnimation, useInView } from "framer-motion";
+import { useAnimation, useInView, Variants } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 export function useScrollReveal(delay = 0) {
@@ -20,6 +20,6 @@ export function useScrollReveal(delay = 0) {
     variants: {
       hidden: { opacity: 0, y: 50 },
       visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay, ease: "easeOut" } },
-    },
+    } as Variants,
   };
 }
