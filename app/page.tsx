@@ -1,5 +1,3 @@
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/sections/Hero";
 import { Categories } from "@/components/sections/Categories";
 import { CropSolutions } from "@/components/sections/CropSolutions";
@@ -15,31 +13,23 @@ import { ScrollStack } from '@/components/animation/scrollStack';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground scroll-smooth">
-      <Navbar />
+    <>
+      <Hero />
 
-      <main className="flex-1">
+      {/* 🔥 STACK EXPERIENCE START */}
+      <ScrollStack>
+        <Categories />
+        <Products />
+        <WhyChoose />
+      </ScrollStack>
+      {/* 🔥 STACK EXPERIENCE END */}
 
-        <Hero />
-
-        {/* 🔥 STACK EXPERIENCE START */}
-        <ScrollStack>
-          <Categories />
-          <Products />
-          <WhyChoose />
-        </ScrollStack>
-        {/* 🔥 STACK EXPERIENCE END */}
-
-        {/* <AIChatbotFeature /> */}
-        <CropSolutions />
-        <Testimonials />
-        <ChatFAQ />
-        <Newsletter />
-        <Contact />
-
-      </main>
-
-      <Footer />
-    </div>
+      {/* <AIChatbotFeature /> */}
+      <CropSolutions />
+      <Testimonials />
+      <ChatFAQ />
+      <Newsletter />
+      <Contact />
+    </>
   );
 }

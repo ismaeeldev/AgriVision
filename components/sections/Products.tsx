@@ -11,6 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { ShoppingCart, Star } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { filter } from "framer-motion/client";
 
 function ProductCardSkeleton() {
   return (
@@ -35,7 +37,7 @@ function ProductCardSkeleton() {
 export function Products() {
   const { ref, controls, variants } = useScrollReveal();
   const [loading, setLoading] = useState(true);
-
+  const filterProduct = PRODUCTS.slice(0, 4);
   // Simulate network loading for skeletons demonstration
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
@@ -70,7 +72,7 @@ export function Products() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {loading
             ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-            : PRODUCTS.map((product, index) => (
+            : filterProduct.map((product, index) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, y: 40 }}
@@ -79,7 +81,8 @@ export function Products() {
                 whileHover={{ rotate: 1.5, scale: 1.02 }}
                 className="h-full"
               >
-                <div className="group relative rounded-2xl overflow-hidden cursor-pointer h-full border border-border/50 bg-white flex flex-col">
+                <Link href={`/products/${product.id}`} className="block h-full outline-none">
+                  <div className="group relative rounded-2xl overflow-hidden cursor-pointer h-full border border-border/50 bg-white flex flex-col">
 
                   {/* Background Glow */}
                   <div className="absolute inset-0 bg-gradient-to-br from-green-100 to-green-50 rounded-2xl" />
@@ -139,6 +142,7 @@ export function Products() {
                   {/* Hover Glow Border */}
                   <div className="absolute inset-0 rounded-2xl ring-1 ring-transparent group-hover:ring-green-400/40 transition-all duration-300" />
                 </div>
+                </Link>
               </motion.div>
             ))}
         </div>

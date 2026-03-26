@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Inter } from "next/font/google";
 import "./globals.css";
+import { ChatbotWidget } from "@/components/ui/ChatbotWidget";
+import { ClientLayoutWrapper } from "@/components/layout/ClientLayoutWrapper";
+import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${inter.variable} antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${inter.variable} antialiased`}>
+        <CartProvider>
+          <ClientLayoutWrapper>
+            {children}
+          </ClientLayoutWrapper>
+          <ChatbotWidget />
+        </CartProvider>
       </body>
     </html>
   );

@@ -8,10 +8,12 @@ import { NAV_LINKS } from "@/constants";
 import { Container } from "./Container";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "@/context/CartContext";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { totalItems } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,13 +54,23 @@ export function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-4">
-          <button className="transition-colors hover:text-[#4CAF50] text-white/80">
-            <Search className="h-5 w-5" />
-          </button>
-          <button className="transition-colors hover:text-[#4CAF50] text-white/80">
-            <ShoppingCart className="h-5 w-5" />
-          </button>
-          <div className="h-6 w-px mx-2 bg-white/20" />
+          <Link href="/cart" className="relative group transition-colors hover:text-[#4CAF50] text-white/80">
+            <ShoppingCart className="h-5 w-5 transition-transform group-hover:scale-110" />
+            <AnimatePresence>
+              {totalItems > 0 && (
+                <motion.span
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  key={totalItems} // Forces re-animation on change
+                  className="absolute -top-2 -right-2 flex h-4 w-4 items-center justify-center rounded-full bg-[#4CAF50] text-[10px] font-bold text-white shadow-lg shadow-[#4CAF50]/30"
+                >
+                  {totalItems}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </Link>
+          <div className="h-6 w-px mx-4 bg-white/20" />
           <Link href="/login">
             <Button variant="ghost" className="text-white/90 hover:text-white hover:bg-white/10 font-semibold transition-all duration-200">Log in</Button>
           </Link>
@@ -104,6 +116,18 @@ export function Navbar() {
                   {link.name}
                 </Link>
               ))}
+              <Link
+                href="/cart"
+                className="flex items-center justify-between text-base font-medium text-foreground py-2 border-b border-border/50 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <span>Protection Plan (Cart)</span>
+                {totalItems > 0 && (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#4CAF50] text-xs font-bold text-white shadow-lg shadow-[#4CAF50]/30">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
               <div className="flex items-center gap-4 py-2">
                 <Button variant="ghost" className="w-full">Log in</Button>
                 <Button className="w-full bg-[#4CAF50] hover:bg-[#4CAF50]/90 text-white">Sign Up</Button>

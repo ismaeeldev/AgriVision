@@ -43,7 +43,7 @@ export function GlobalTrust() {
     <section className="bg-[#1B5E20] text-white py-24 relative overflow-hidden">
       {/* Texture overlay */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[size:24px_24px]" />
-      
+
       <Container className="relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-white/20">
           <motion.div

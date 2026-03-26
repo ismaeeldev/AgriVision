@@ -1,10 +1,10 @@
 export const NAV_LINKS = [
   { name: "Home", href: "/" },
-  { name: "Products", href: "#products" },
+  { name: "Products", href: "/products" },
   { name: "Categories", href: "#categories" },
+  { name: "Nearby Help", href: "/nearby-help" },
   { name: "Why Choose Us", href: "#why-choose-us" },
   { name: "Global Trust", href: "#global-trust" },
-  { name: "Testimonials", href: "#testimonials" },
   { name: "Contact", href: "#contact" },
 ];
 
