@@ -1,91 +1,312 @@
-# AgriVision Android App - Premium Styling & Feature Guideline
+# AgriVision App Guideline (Premium + Consistent)
 
-This document serves as the single source of truth for translating the premium, web-based SaaS architecture of AgriVision into a native Android Application. The goal is to ensure 100% visual consistency, physics-based animations, and a high-end "biotech/agritech" feel across platforms.
+Last updated: 2026-04-24
 
-## 1. Color Palette & Theming (Compose Colors / colors.xml)
+This is the implementation guide for developers building AgriVision experiences from this project. It is now aligned with the current codebase and focused on one goal:
 
-The app utilizes the same earthy, agriculture-inspired palette, elevated by high-contrast premium UI concepts.
+Build a premium agritech product with consistent visual language, motion behavior, and feature parity.
 
-### Core Colors
-*   **Deep Agriculture Green (Primary Backgrounds / App Bars / Bottom Sheets)**
-    *   Hex: `#1B5E20`
-    *   Usage: Grounds the design. Used for heavy contrast areas or primary branding headers.
-*   **Fresh Leaf Green (Accents / CTAs / Fabs / Highlights)**
-    *   Hex: `#4CAF50`
-    *   Usage: Primary buttons, active states, glowing accents, and trailing highlighted words in typography.
-*   **Golden Wheat (Premium Accents)**
-    *   Hex: `#C9A227`
-    *   Usage: Star ratings, critical trust markers, warnings, and special iconography.
+## 1. Product Intent
 
-### Surface & Background Tones (Light/Dark Mode considerations)
-*   **Main Background**: Pure White (`#FFFFFF`) or off-white (`#FAFAFA`).
-*   **Dark Mode Background**: Deep Forest/Black tint (`#08120A`).
-*   **Glassmorphism (Dark)**: Translucent overlays (`#1AFFFFFF`) with subtle borders (`1dp` border of `#1AFFFFFF`).
-*   **Glassmorphism (Light)**: High opacity white (`#B3FFFFFF`) with heavy blur and a white stroke (`#66FFFFFF`).
+AgriVision is a premium agritech platform that combines:
 
-## 2. Typography
+1. Crop protection commerce
+2. AI-assisted crop diagnosis
+3. Nearby expert assistance
 
-We prioritize incredibly bold, striking typography to emulate top-tier tech presentations (like Apple or Stripe apps).
+Design personality:
 
-*   **Typeface**: Integrate a modern geometric sans-serif (e.g., **Inter** or **SF Pro/Roboto Flex**). Do not use the standard, stiff default Android font without customization.
-*   **Section Headers (H1/H2) - `MaterialTheme.typography.h3/h4` equivalents**:
-    *   Weight: Extremely Bold (`FontWeight.ExtraBold` or `800`).
-    *   Tracking: Tight spacing (`letterSpacing = (-0.5).sp`).
-    *   Layout styling: Frequent use of dual-tone text (e.g., standard text color but the final keyword is styled `color = Color(0xFF4CAF50)`).
-*   **Subheaders & Labels (Overlines)**:
-    *   Uppercase with heavy tracking (`letterSpacing = 2.sp`).
-    *   Text color: Muted foreground (`alpha = 0.7f` or `Color(0xFF1B5E20).copy(alpha = 0.7f)` for light mode).
+1. Trustworthy and scientific (not flashy-gimmicky)
+2. Modern and optimistic (green energy, clean surfaces)
+3. Premium depth (glass, glow, soft shadows, rich spacing)
 
-## 3. Component Architecture & Shapes
+## 2. Source of Truth and Scope
 
-**Rule: No Sharp Corners.** The app strictly uses heavily rounded corners to imply modern safety and biotechnology.
+This guideline is based on current implementation in this repository.
 
-*   **Primary Cards (Products, Disease Results)**:
-    *   Border Radius: `RoundedCornerShape(16.dp)` to `RoundedCornerShape(24.dp)`.
-    *   Internal Padding: Lavish use of whitespace (`16.dp` to `24.dp` padding minimum).
-*   **Giant Layout Blocks (Bottom Sheets, Modal Drawers)**:
-    *   Border Radius: Massive top rounding `RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)`.
-*   **Buttons, Badges, & FABs**:
-    *   Exclusively fully rounded pills (`CircleShape`).
-    *   Badges should use tinted backgrounds (e.g., `#334CAF50` background with `#4CAF50` text).
+Core routes currently implemented:
 
-## 4. Depth & Lighting (Shadows & Glass)
+1. `/` (landing with stacked sections)
+2. `/products` (search/filter/pagination catalog)
+3. `/products/[id]` (immersive product detail story page)
+4. `/cart` (smart plan/cart UX)
+5. `/nearby-help` (map + experts + bottom sheet)
+6. `/field-officers/[id]` (expert profile)
+7. `/login`
+8. `/signup`
 
-Avoid flat design. The premium feel relies on depth, lighting, and ambient blurs.
+Global modules:
 
-*   **Interaction Shadows**: Instead of standard Android hard black elevations, use custom drawn soft shadow modifiers with massive spread and low alpha (e.g., simulating a `blur radius` of `40px` and `0.1` alpha opacity).
-*   **Background Orbs/Glows**: Behind glassmorphism cards, draw absolute radial gradient colored blurs (e.g., a massive green glowing circle with `Modifier.blur(80.dp)`) to prevent dark backgrounds from looking flat.
-*   **Blur Effects**: Utilize Jetpack Compose `Modifier.blur()` (API 31+) or `RenderEffect` to achieve authentic frosted glass overlays for floating navigation or sticky headers.
+1. Global navbar/footer shell
+2. Floating chatbot widget (chat + scan mode)
+3. Cart context with role/strength tags
 
-## 5. Animation & Physics (The "Framer Motion" Engine for Android)
+## 3. Premium Theme System
 
-Animations MUST be physics-driven using Springs. Eliminate linear, "snappy", or stiff Android UI jank.
+### 3.1 Color System
 
-*   **Spring Physics System**: Use Jetpack Compose `spring()` animations.
-    *   `dampingRatio = Spring.DampingRatioMediumBouncy` or `NoBouncy` depending on mass.
-    *   `stiffness = Spring.StiffnessLow` to match the web's mass of 1.2.
-*   **Scroll Reveal (General Content)**: As items enter the `LazyColumn`, they should animate their `alpha` from `0f -> 1f` and `translationY` from `40.dp -> 0.dp` with a gentle spring.
-*   **Touch/Press Interactions**: Buttons and cards should scale down under the finger (`Modifier.scale` targets `0.95f` on press) and spring back to `1.0f` on release.
-*   **The "Scroll Stack" (Macro-layout)**: To emulate the web's defining scrolling feature, implement custom `LazyList`/`Pager` logic where elements scrolling out of the view towards the top scale down (`0.9f`), lose brightness, and become heavily blurred, sitting "behind" the currently active card.
+Primary brand colors:
 
-## 6. Core Feature Parity Requirements
+1. Deep Green: `#1B5E20` (trust, headers, dark sections, strong CTA base)
+2. Leaf Green: `#4CAF50` (action accent, active states, success emphasis)
+3. Golden Wheat: `#C9A227` (ratings, premium trust highlights)
 
-To serve the exact same feature set as the web platform, the app must include:
+Neutrals:
 
-1.  **AI Crop Doctor (Dual Mode)**:
-    *   A seamless, highly animated toggle between a familiar Conversational Chat interface and an intelligent Camera Scanner mode.
-2.  **Immersive AR/Camera Scanner**:
-    *   Full-bleed edge-to-edge camera viewfinder.
-    *   Animated overlay graphics (scanning reticles, corner brackets).
-    *   Haptic Feedback (Vibrations) synced to successful scans and AI analysis completion.
-3.  **Product E-Commerce Platform**:
-    *   Dynamic Product Grid with smooth, animated re-ordering when filtering tags are selected.
-    *   Shared Element Transitions seamlessly expanding a grid item into its full Product Detail Page natively.
-    *   Animated, expandable native search bar.
+1. Primary light background: white or zinc-50 style surface
+2. Surface cards: white with soft zinc border
+3. Muted text: zinc-500 to zinc-600 range
 
-## 7. Recommended Android Stack
+Usage rules:
 
-*   **UI Toolkit**: Jetpack Compose (Mandatory to achieve the required layout fluidity, blurs, and spring animations).
-*   **Architecture**: MVVM with Kotlin Coroutines/StateFlow.
-*   **Camera API**: CameraX (for lifecycle-aware image analysis).
-*   **Image Loading**: Coil (ensure crossfade transitions are enabled for all remote images).
+1. Every major heading should include one highlighted phrase in Leaf Green.
+2. Do not introduce unrelated accent families unless semantically required.
+3. Keep primary CTAs green-gradient or deep-green filled.
+4. Use yellow only for rating/trust-style meaning, not generic buttons.
+
+### 3.2 Typography System
+
+Current code uses Geist/Inter globally plus many section-level "Segoe UI" overrides.
+
+Standard moving forward:
+
+1. Display/headings: `Segoe UI`, fallback `var(--font-geist-sans)`, sans-serif
+2. Body/UI copy: `var(--font-geist-sans)` or `var(--font-inter)`
+
+Type rules:
+
+1. Headings: bold to extra-bold (`700` to `800`), tight tracking.
+2. Section labels: uppercase + tracking-wide/widest.
+3. Body copy: medium contrast, readable line-height, avoid over-light weights.
+
+### 3.3 Radius, Borders, and Shapes
+
+No sharp corners.
+
+1. Cards: `rounded-2xl` to `rounded-3xl`
+2. Feature/story panels: up to `rounded-[32px]` or `rounded-[40px]`
+3. Buttons/chips/FABs: predominantly pill-style (`rounded-full`)
+4. Bottom sheets: very rounded top corners
+
+### 3.4 Depth and Surface Treatment
+
+Premium depth is mandatory:
+
+1. Use soft shadows with green tint where relevant.
+2. Use glassmorphism only where meaningful (chat panels, auth cards, overlays).
+3. Use atmospheric gradients/orbs for section mood.
+4. Avoid flat, unlayered blocks in hero and featured areas.
+
+## 4. Motion Language (Must Stay Consistent)
+
+Framework baseline: Framer Motion spring-oriented interactions.
+
+Key behaviors:
+
+1. Scroll reveal pattern: `opacity 0 -> 1`, `y 20-40 -> 0`.
+2. Hover micro-interaction: small lift/scale (`~1.02 to 1.05`) with shadow growth.
+3. Mode/panel transitions: subtle directional slide + fade + blur.
+4. Floating accents: low-amplitude infinite drift for premium liveliness.
+
+Signature experience:
+
+1. ScrollStack section engine with layered depth behavior.
+2. Covered cards must scale down, blur, and darken.
+3. Never replace this with abrupt section jumps for premium pages.
+
+## 5. Layout and Spacing Rhythm
+
+1. Use `Container` wrapper for horizontal consistency.
+2. Use `.section-padding` for primary vertical rhythm.
+3. Major sections should breathe (large top/bottom spacing).
+4. Keep mobile-first stacking and avoid cramped card density.
+
+## 6. Feature Inventory and UX Standards
+
+### 6.1 Landing Experience (`/`)
+
+Includes:
+
+1. Hero with layered atmosphere and trust stats
+2. ScrollStack sequence:
+3. `Categories` (anchor id `categories`)
+4. `Products` preview (anchor id `products`)
+5. `WhyChoose`
+6. Additional sections: `CropSolutions`, `Testimonials`, `ChatFAQ`, `Newsletter`, `Contact`
+
+Rules:
+
+1. If adding new homepage section, decide if it belongs inside ScrollStack or normal flow.
+2. Maintain premium transitions and visual continuity between light/dark-ish blocks.
+
+### 6.2 Product Catalog (`/products`)
+
+Includes:
+
+1. Search expansion interaction
+2. Dynamic category chips + high-rated filter
+3. Paginated product grid
+4. Empty-state UX with recovery action
+
+Rules:
+
+1. Filtering must feel instant.
+2. Card hover should preserve product readability.
+3. Keep CTA hierarchy clear: product detail first, cart action secondary.
+
+### 6.3 Product Detail (`/products/[id]`)
+
+Includes:
+
+1. Immersive hero with floating product visual
+2. Story sequence (problem -> solution)
+3. Benefits grid
+4. Recovery timeline
+5. Reviews + review submission state
+6. Mobile sticky CTA
+
+Rules:
+
+1. Keep storytelling progression clear and scannable.
+2. Product CTA must stay visible and high-contrast.
+3. Review interactions should feel responsive and delightful.
+
+### 6.4 Cart / Protection Plan (`/cart`)
+
+Includes:
+
+1. Smart plan title generated from cart role mix
+2. Item cards + recommendation strip + summary
+3. Rich empty-state CTA
+
+Rules:
+
+1. Plan framing should remain aspirational (strategy/protection language).
+2. Summary block should stay sticky on desktop.
+3. Cart actions must update badge counts and totals immediately.
+
+### 6.5 Nearby Help (`/nearby-help`)
+
+Includes:
+
+1. Location permission experience
+2. Fallback geolocation handling
+3. Dynamic expert distance calculation
+4. Leaflet map with custom markers
+5. Bottom sheet expert actions
+
+Rules:
+
+1. Permission flow must be clear and non-blocking.
+2. Expert nearest/active state should be visually obvious.
+3. Bottom sheet and map camera movement must feel coordinated.
+
+### 6.6 Field Officer Profile (`/field-officers/[id]`)
+
+Includes:
+
+1. Profile hero with availability signal
+2. Trust metrics + specialization chips
+3. WhatsApp and contact actions
+4. Large support CTA block
+
+Rules:
+
+1. Emphasize trust and verification.
+2. Keep contact actions always discoverable.
+
+### 6.7 Auth (`/login`, `/signup`)
+
+Includes:
+
+1. Split-panel premium auth layout
+2. Glass card with motion states
+3. Loading/success interactions
+
+Rules:
+
+1. Auth pages intentionally hide global nav/footer.
+2. Keep interaction feedback immediate (focus, submit, success).
+
+### 6.8 AI Chatbot Widget (Global)
+
+Includes:
+
+1. Floating smart FAB with hint switching
+2. Chat mode (FAQ-like intelligence + scan context)
+3. Scan mode (upload/camera mock flow + staged analysis)
+4. Context handoff from scan to chat
+
+Rules:
+
+1. Widget must remain available globally (except if future product decision says otherwise).
+2. Chat and scan are equal modes; do not bury one.
+3. Use smooth mode transitions, not hard switch.
+
+## 7. Data and Behavior Reality (Important for Developers)
+
+Current implementation includes demo/mock behavior in places.
+
+1. Auth submits are simulated.
+2. Chatbot responses are keyword/mock driven.
+3. Scan analysis is simulated pipeline + mock result.
+4. Cart initializes with demo items.
+
+When integrating backend:
+
+1. Keep UX states unchanged (loading, empty, success, error).
+2. Preserve existing premium interaction and timing expectations.
+3. Do not remove visual polish during API integration.
+
+## 8. Accessibility and Quality Bar
+
+Minimum standards:
+
+1. Keyboard navigable interactive controls.
+2. Visible focus states on all inputs/buttons.
+3. Sufficient contrast for text over gradients/glass.
+4. Alt text for meaningful imagery.
+5. Proper heading hierarchy per page.
+
+Performance standards:
+
+1. Prefer GPU-friendly transforms for animation.
+2. Avoid overusing heavy blur on low-end devices.
+3. Keep map/chat overlays performant on mobile.
+
+## 9. Component Reuse Rules
+
+1. Reuse existing primitives in `components/ui` first.
+2. Keep button, card, badge language consistent with existing variants.
+3. New components must follow the same radius, spacing, and color logic.
+4. Use existing hooks/utilities before introducing parallel patterns.
+
+## 10. Consistency Checklist Before Merge
+
+Every new feature/page must pass:
+
+1. Uses brand greens correctly and consistently.
+2. Has premium depth (not flat default blocks).
+3. Matches motion style (spring-like, smooth, contextual).
+4. Works on mobile and desktop breakpoints.
+5. Includes proper empty/loading/error states.
+6. Maintains navbar/footer and chatbot behavior expectations.
+7. Does not break ScrollStack or section rhythm on homepage.
+
+## 11. What to Avoid
+
+1. Random new color accents disconnected from brand palette.
+2. Sharp-cornered components in premium sections.
+3. Abrupt/no-motion transitions for key interactions.
+4. Mixing unrelated visual styles across pages.
+5. Generic, plain layouts that remove brand character.
+
+## 12. Final Handoff Note
+
+If a developer is unsure between two design options, choose the one that is:
+
+1. More consistent with existing AgriVision pages
+2. More premium in depth and motion
+3. More readable and trustworthy for farmers
+
+Consistency is a product feature in AgriVision, not a cosmetic preference.

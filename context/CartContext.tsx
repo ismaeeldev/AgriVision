@@ -45,8 +45,11 @@ const deriveTagsFromCategory = (category: string) => {
   }
 };
 
+import { useToast } from "@/context/ToastContext";
+
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const { toast } = useToast();
 
   // Initialize with dummy data as requested (so we can visually see the cart page)
   useEffect(() => {
@@ -79,19 +82,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const addToCart = useCallback((productId: string) => {
-    setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.id === productId);
-      if (existing) {
-        return prevCart.map((item) =>
+    const product = PRODUCTS.find((p) => p.id === productId);
+    if (!product) return;
+
+    const existing = cart.find((item) => item.id === productId);
+
+    if (existing) {
+      toast(`${product.name} quantity increased`, "info");
+      setCart((prevCart) =>
+        prevCart.map((item) =>
           item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
-        );
-      }
-      const product = PRODUCTS.find((p) => p.id === productId);
-      if (!product) return prevCart;
-
+        )
+      );
+    } else {
       const tags = deriveTagsFromCategory(product.category);
-
-      return [
+      toast(`${product.name} added to your Protection Plan`, "success");
+      setCart((prevCart) => [
         ...prevCart,
         {
           id: product.id,
@@ -102,13 +108,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           quantity: 1,
           ...tags
         },
-      ];
-    });
-  }, []);
+      ]);
+    }
+  }, [cart, toast]);
 
   const removeFromCart = useCallback((productId: string) => {
+    const product = PRODUCTS.find(p => p.id === productId);
     setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
-  }, []);
+    if (product) toast(`${product.name} removed from Plan`, "info");
+  }, [toast]);
 
   const updateQuantity = useCallback((productId: string, quantity: number) => {
     if (quantity < 1) return;
@@ -119,7 +127,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   }, []);
 
-  const clearCart = useCallback(() => setCart([]), []);
+  const clearCart = useCallback(() => {
+    setCart([]);
+    toast("Protection Plan cleared", "info");
+  }, [toast]);
 
   const totalItems = useMemo(() => cart.reduce((total, item) => total + item.quantity, 0), [cart]);
   const totalPrice = useMemo(() => cart.reduce((total, item) => total + item.price * item.quantity, 0), [cart]);

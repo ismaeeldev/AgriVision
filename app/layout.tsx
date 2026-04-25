@@ -3,7 +3,6 @@ import { Geist, Inter } from "next/font/google";
 import "./globals.css";
 import { ChatbotWidget } from "@/components/ui/ChatbotWidget";
 import { ClientLayoutWrapper } from "@/components/layout/ClientLayoutWrapper";
-import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,6 +19,9 @@ export const metadata: Metadata = {
   description: "Premium pesticide and crop protection solutions for modern farmers.",
 };
 
+import { CartProvider } from "@/context/CartContext";
+import { ToastProvider } from "@/context/ToastContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,12 +30,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${inter.variable} antialiased`}>
-        <CartProvider>
-          <ClientLayoutWrapper>
-            {children}
-          </ClientLayoutWrapper>
-          <ChatbotWidget />
-        </CartProvider>
+        <ToastProvider>
+          <CartProvider>
+            <ClientLayoutWrapper>
+              {children}
+            </ClientLayoutWrapper>
+            <ChatbotWidget />
+          </CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );

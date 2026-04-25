@@ -4,21 +4,30 @@ import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PRODUCTS } from "@/data/products";
 import { Container } from "@/components/layout/Container";
-import { Search, Star, ShoppingCart, Leaf, ChevronLeft, ChevronRight, FilterX } from "lucide-react";
+import { Search, Star, ShoppingCart, Leaf, ChevronLeft, ChevronRight, FilterX, Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
+import { useToast } from "@/context/ToastContext";
 
 const ITEMS_PER_PAGE = 8;
 
 export default function ProductsPage() {
+  const { addToCart } = useCart();
+  const { toast } = useToast();
+  const [addingId, setAddingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [isMounted, setIsMounted] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsMounted(true);
+    // Simulate professional loading
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
   }, []);
 
   // Compute categories dynamically
@@ -50,6 +59,9 @@ export default function ProductsPage() {
   // Reset pagination when filters change
   useEffect(() => {
     setCurrentPage(1);
+    setIsLoading(true);
+    const timer = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(timer);
   }, [searchQuery, activeCategory]);
 
   // Pagination logic
@@ -63,8 +75,7 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 pt-28 pb-20">
-
-      {/* Subtle Background Motion for Light Theme */}
+      {/* ... backgrounds ... */}
       <motion.div
         animate={{
           scale: [1, 1.1, 1],
@@ -84,7 +95,6 @@ export default function ProductsPage() {
         className="absolute top-[30%] -right-[10%] w-[40%] h-[60%] bg-emerald-100/60 blur-[130px] rounded-full pointer-events-none"
       />
 
-      {/* ── HEADER ── */}
       <Container>
         <div className="mb-10 text-center max-w-2xl mx-auto">
           <motion.div
@@ -102,12 +112,9 @@ export default function ProductsPage() {
         </div>
       </Container>
 
-      {/* ── SMART FILTER BAR ── */}
       <div className="relative z-40 py-2 mb-10 w-full">
         <Container>
           <div className="flex flex-col-reverse md:flex-row md:items-center justify-between gap-4">
-
-            {/* Filter Chips (Left side) */}
             <div className="flex-1 overflow-x-auto pb-1 md:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <div className="flex items-center gap-2">
                 {categories.map((cat) => (
@@ -128,7 +135,6 @@ export default function ProductsPage() {
               </div>
             </div>
 
-            {/* Expanding Search Input (Right side) */}
             <div className="flex justify-end self-end md:self-auto">
               <motion.div
                 initial={false}
@@ -166,15 +172,34 @@ export default function ProductsPage() {
                 </div>
               </motion.div>
             </div>
-
           </div>
         </Container>
       </div>
 
-      {/* ── PRODUCT GRID ── */}
       <Container>
         <AnimatePresence mode="wait">
-          {filteredProducts.length === 0 ? (
+          {isLoading ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="h-[400px] rounded-2xl bg-white border border-zinc-100 p-5 space-y-4 animate-pulse">
+                  <div className="w-full h-40 bg-zinc-50 rounded-xl" />
+                  <div className="h-6 w-3/4 bg-zinc-50 rounded" />
+                  <div className="h-4 w-full bg-zinc-50 rounded" />
+                  <div className="h-4 w-1/2 bg-zinc-50 rounded" />
+                  <div className="mt-auto flex justify-between items-center">
+                    <div className="h-8 w-20 bg-zinc-50 rounded" />
+                    <div className="h-10 w-24 bg-zinc-50 rounded-full" />
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          ) : filteredProducts.length === 0 ? (
             /* EMPTY STATE */
             <motion.div
               key="empty"
@@ -263,9 +288,22 @@ export default function ProductsPage() {
                           </span>
 
                           {/* CTA */}
-                          <button className="flex items-center gap-2 px-4 h-9 rounded-full bg-[#1B5E20] text-white text-sm font-semibold shadow-md hover:bg-[#4CAF50] hover:shadow-[0_4px_12px_rgba(76,175,80,0.3)] transition-all duration-300">
-                            <ShoppingCart size={15} />
-                            <span className="hidden sm:inline-block">Add</span>
+                          <button 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              addToCart(product.id);
+                              setAddingId(product.id);
+                              setTimeout(() => setAddingId(null), 2000);
+                            }}
+                            className={`flex items-center gap-2 px-4 h-9 rounded-full transition-all duration-300 text-sm font-semibold shadow-md ${
+                              addingId === product.id 
+                              ? "bg-green-100 text-green-700 shadow-none border border-green-200" 
+                              : "bg-[#1B5E20] text-white hover:bg-[#4CAF50] hover:shadow-[0_4px_12px_rgba(76,175,80,0.3)]"
+                            }`}
+                          >
+                            {addingId === product.id ? <Check size={15} /> : <ShoppingCart size={15} />}
+                            <span className="hidden sm:inline-block">{addingId === product.id ? "Added" : "Add"}</span>
                           </button>
                         </div>
                       </div>

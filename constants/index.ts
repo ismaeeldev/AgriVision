@@ -1,11 +1,11 @@
 export const NAV_LINKS = [
   { name: "Home", href: "/" },
   { name: "Products", href: "/products" },
-  { name: "Categories", href: "#categories" },
   { name: "Nearby Help", href: "/nearby-help" },
-  { name: "Why Choose Us", href: "#why-choose-us" },
-  { name: "Global Trust", href: "#global-trust" },
-  { name: "Contact", href: "#contact" },
+  { name: "🌱 Farm Results", href: "/case-studies" },
+  { name: "🧪 Precision Dose", href: "/precision-dose" },
+  { name: "🌾 Smart Fields", href: "/field-mapping" },
+  // { name: "Contact", href: "#contact" },
 ];
 
 export const TESTIMONIALS = [
